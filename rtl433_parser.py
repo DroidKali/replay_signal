@@ -9,11 +9,13 @@ parser = argparse.ArgumentParser(description='A python script to sent replay sig
 parser.add_argument('-f', action="store", default="433920000", dest="baseFreq",help='Specify the target frequency to transmit on, default is 433920000.',type=int)
 parser.add_argument('-b', action="store", dest="bitstring",help='Specify the bits from RTL_433 raw code.',type=str)
 parser.add_argument('-r', action="store", dest="baudRate", default="2500", help='Specify the baudrate of the signal, default is 2500.',type=int)
+parser.add_argument('-x', action="store", dest="multiply", default="15", help='Specify the multiply of the signal, default is 15.',type=int)
+
 results = parser.parse_args()
 freq = results.baseFreq
-start = b'\x80\x00\x00\x00\x00'
 bits= results.bitstring
 baudRate = results.baudRate
+multiply = results.multiply
 bs = ''
 for s in bits:
     if s == '1':
@@ -21,6 +23,7 @@ for s in bits:
     else:
         bs += '1000'
 
+start = b'\x80\x00\x00\x00\x00'
 bytes = bitstring.BitArray(bin=bs).tobytes()
 out = start + bytes
 
@@ -34,5 +37,5 @@ d.setMaxPower()
 print("\033[31m要发射的信号数据为：\033[0m")
 print(out)
 print("\033[32m开始发送。。。\033[0m")
-d.RFxmit(out*15)
+d.RFxmit(out*multiply)
 print("\033[31m发送完成。\033[0m")
